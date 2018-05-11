@@ -1,0 +1,344 @@
+\section{Introduction}
+In all modern (High Level) programming language , You will find one or more library that deals with big numbers , that because the pure language types don't support big number types and arbitrary precision arithmetic on integers , This because hardware limitation , so developers have tried to make libraries that emulate hardware on top of software so they can provide operation on number with big number of digits .\newline
+
+Exemples : 
+ \begin{itemize}
+	\item The GNU MP Bignum C-Library
+	\item The Boost C++ Library (arbitrary precision lib)
+\end{itemize}
+
+The two libraries above are the main libs which are used and have a big community around them in c/c++ based programs ,But the problem these is that this two libraries can't be run on a device like raspberry or an adruino bacause of memory limitation ,and like most other motes used in wireless sensor network are c-based and has low memory, so All these kinda devices need a tiny library that has just main and base arithmetic operations in order to run and compute some operation that has numbers with big digits .
+\section{Main Idea}
+The main idea of representing big numbers structure is to define a data structure (Discussed in Data Structures section) that is composed of two arrays of fixed size which will hold the integer part,fractional part respectively ,define sign bit which will be holding the sign of the number all time ,and also defining an integer number which will be holding the digits' number of integer part to be able to keep tracking of the integer part.Then lastly define all basic arithmetic operation(Discussed in algorithms section) on this data structure like addition,substraction,multiplication and division algorithms .
+\section{Library structure}
+The main benefits of this library is that it doesn't has any dynamic allocation at all , instead it has a configuration file that you must initialize some macros on it in order precise the maximum number of digits that you're expecting to use for two Integer,Floating parts before compilation time ,so it will let heap space for the other important works that must be done in real time . 
+
+\subsection{Data Structures}
+In this section we will be describing the main data structure that will be used in this library 
+\begin{center}
+	\line(1,0){250}
+\end{center}
+\paragraph{bnstruct} is the main data structure that will hold all big numbers through this library :
+\begin{lstlisting}[style=CStyle]
+	struct bnstruct{
+	 char intNum[MaxInt+1];
+	 char floatNum[MaxFloat+1];
+	 unsigned short intlen;
+	 bool signNum;
+	
+	};
+	
+	typedef struct bnstruct bn;
+\end{lstlisting}
+
+\begin{itemize}
+	\item char intNum : This is a char array that will holds the integer part of the big number.
+	\item MaxInt : This is a macro that hold the maximum number of digits in decimal part that bn structure will support in run time. 
+	\item char floatNum : This is a char array that will holds the rational part of the big number .
+	\item MaxFloat : This is a macro that hold the maximum number of digits in decimal part that bn structure will support in run time.
+	\item unsinged short intlen : a positive short number that will holds the length of the decimal part.
+	\item bool signNum : a boolean number that will holds the sign of the big number(Positive,Negative).
+\end{itemize}
+\begin{center}
+	\line(1,0){250}
+\end{center}
+\paragraph{splittedNum} is the main data structure that will hold all big numbers that are splitted into two bignumbers through this library :\newline\newline
+Exemple : 
+\begin{itemize}
+	\item Original number($a_{n},a_{n-1},...,a_{0}$)
+	\item Splitted Number($a_{j-1},a_{j-2},...,a_{0}$ $|$ $a_{n},a_{n-1},...,a_{j}$ $|$ $10^{j}$)
+\end{itemize}
+
+
+
+
+
+ 
+
+\begin{lstlisting}[style=CStyle]
+struct splittedNum{
+	bn first;
+	bn second;
+	unsigned int shift;
+};
+\end{lstlisting}
+
+\begin{itemize}
+	\item bn first : This structure will hold the first part of the original big number 
+	\item bn second : This structure will hold the first part of the original big number
+	\item unsigned int shift : this integer will hold the length of the decimal part of first number
+\end{itemize}
+
+
+
+\subsection{Algorithmes}
+This library has the implementation of the main algorithmes to provide the main arithmetic operations on big number structure that was described above . In this section we'll be describing these algorithmes .
+
+
+
+%%addition algorithme
+
+\newpage
+\begin{center}
+	\line(1,0){250}
+\end{center}
+
+\paragraph{Addition Algorithm}
+This algorithm is used as main and basic operation for adding see(Addition Algorithm) to big numbers ,it takes two big numbers as an input then returns the addition .It has linear time complexity O(n) where n is equal to summation of integer part length,fractional part length respectively . 
+\newline\newline\newline\newline\newline\newline\newline\newline\newline
+\begin{algorithm}[H]
+	\SetAlgoLined
+	\KwIn{$num1(n1d_{MaxInt},...,n1d_{0}$ $ . $  $n1f_{MaxFloat},...,n1f_{0}) $
+		
+		\hspace{1.25cm}$  num2(rd_{MaxInt},...,rd_{0}$ $ . $  $ n2f_{MaxFloat},...,n2f_{0})$}
+	\KwResult{$result(rd_{MaxInt},...,rd_{0}$ $ . $  $rf_{MaxFloat},...,rf_{0})$ }
+	i,carry = 0,tmp=0\;
+
+	\For{i in $range(MaxFloat,0)$}
+	{
+		
+		$tmp = (n1f_{i} + n1f_{i} + carry);$
+		
+		$rf_{i} =  tmp $\%$ 10;$ 
+		
+		$carry = tmp $/$ 10;$
+	}
+
+		\For{i in $range(MaxInt,0)$}
+	{
+		
+		$tmp = (n1d_{i} + n1d_{i} + carry);$
+		
+		$rd_{i} =  tmp $\%$ 10;$ 
+		
+		$carry = tmp $/$ 10;$
+	}
+	\caption{Addition}
+	\label{Addition_Algorithm}
+\end{algorithm}
+
+
+
+%%substraction algorithm
+\newpage
+\begin{center}
+	\line(1,0){250}
+\end{center}
+
+\paragraph{Substraction Algorithm}
+This algorithm is used as main and basic operation for substracting see(Substraction Algorithm) to big numbers ,it takes two big numbers as an input then returns the substraction .It has linear time complexity O(n) where n is equal to summation of integer part length,fractional part length respectively . 
+\newline\newline\newline\newline\newline\newline\newline\newline\newline
+\begin{algorithm}[H]
+	\SetAlgoLined
+	\KwIn{$num1(n1d_{MaxInt},...,n1d_{0}$ $ . $  $n1f_{MaxFloat},...,n1f_{0}) $
+		
+		\hspace{1.25cm}$  num2(rd_{MaxInt},...,rd_{0}$ $ . $  $ n2f_{MaxFloat},...,n2f_{0})$}
+	\KwResult{$result(rd_{MaxInt},...,rd_{0}$ $ . $  $rf_{MaxFloat},...,rf_{0})$ }
+	i,borrow = 0,tmp=0\;
+	
+	\For{i in $range(MaxFloat,0)$}
+	{
+		
+		$tmp = (n1f_{i} - n1f_{i} - carry);$
+		
+		
+ 	 	 \eIf{$tmp < 0$}
+ 	 	 {
+  	 	 	$tmp += 10;$
+  	 	 
+  	 	    $borrow = 1;$
+   	 	}
+ 	 	{
+  			$borrow  = 0;$
+		}
+		$rf_{i} =  tmp;$ 
+		
+	}
+	
+	\For{i in $range(MaxInt,0)$}
+	{
+			$tmp = (n1d_{i} - n1d_{i} - borrow);$
+		
+		
+		\eIf{$tmp < 0$}
+		{
+			$tmp += 10;$
+			
+			$borrow = 1;$
+		}
+		{
+			$borrow  = 0;$
+		}
+		$rd_{i} =  tmp;$ 
+	
+	}
+	\caption{Substraction}
+	\label{substraction_algorithm}
+\end{algorithm}
+
+
+
+%%Multiplication algorithm
+\newpage
+\begin{center}
+	\line(1,0){250}
+\end{center}
+\paragraph{Multiplication Algorithm}
+This algorithm is used as main and basic operation for multiplication see(Multiplication Algorithm) to big numbers ,it takes two big numbers as an input then returns the multiplication .It has linear time complexity O($n^{1.59}$) where n is equal to maximum of integer part length,fractional part length respectively .
+\newline\newline\newline\newline\newline\newline\newline\newline\newline
+\begin{algorithm}[H]
+	\SetAlgoLined
+	\KwIn{$num1(n1d_{MaxInt},...,n1d_{0}$ $ . $  $n1f_{MaxFloat},...,n1f_{0}) $
+		
+		\hspace{1.25cm}$  num2(rd_{MaxInt},...,rd_{0}$ $ . $  $ n2f_{MaxFloat},...,n2f_{0})$}
+	\KwResult{$result(rd_{MaxInt},...,rd_{0}$ $ . $  $rf_{MaxFloat},...,rf_{0})$ }
+	s1 = 0,s2 = 0,tmp1,tmp2,tmp3,tmp4;
+
+	\eIf{num1 is equal to Zero or num2 is equal to zero}
+	{
+		$result = Zero;$
+	}
+	
+	\eIf{both num1 and num2 are simple numbers}
+	{
+		$result = num1 * num2;$ 
+	}
+	{
+		\eIf{num1 is simple and num2 is big number}
+		{
+			$splitNum(num2,tmp1,tmp2,s1);$
+			
+			$result = addition(multiplication(num2,tmp1),sh10(multiplication(num2,tmp2),s1));$	
+		}
+		{
+				\eIf{num2 is simple and num1 is big number}
+				{
+						$splitNum(num1,tmp3,tmp4,s2);$
+					
+						$result = addition(multiplication(num1,tmp3),sh10(multiplication(num1,tmp4),s2));$
+			
+				}
+				{
+					% (tmp1+tmp22*shift1)*(tmp3+tmp4*shift2)
+					$splitNum(num1,tmp1,tmp2,s);$
+					
+					$splitNum(num2,tmp3,tmp4,s2);$
+					$result = add(mul(tmp1,tmp3),sh10(mul(tmp1,tmp4),s2),sh10(mult(tmp2,tmp3),s1),$
+					$sh10(mul(tmp2,tmp4),s1+s2));$
+				
+				}
+	
+		}	
+	
+	}
+
+	\caption{Multiplication}
+	\label{multiplication_Algorithm}
+\end{algorithm}
+
+
+
+%%Division algorithm
+\newpage
+\begin{center}
+	\line(1,0){250}
+\end{center}
+
+\paragraph{Division Algorithm}
+This algorithm is used as main and basic operation for Division see(Division Algorithm) to big numbers ,it takes two big numbers as an input then returns the disivion .It has linear time complexity O(n) where n is equal to summation of integer part length,fractional part length respectively .
+\newline\newline\newline\newline\newline\newline\newline\newline\newline
+
+
+\begin{algorithm}[H]
+	\SetAlgoLined
+	\KwIn{$num1(n1d_{MaxInt},...,n1d_{0}$ $ . $  $n1f_{MaxFloat},...,n1f_{0}) $
+		
+		\hspace{1.25cm}$  num2(rd_{MaxInt},...,rd_{0}$ $ . $  $ n2f_{MaxFloat},...,n2f_{0})$}
+	\KwResult{$result(rd_{MaxInt},...,rd_{0}$ $ . $  $rf_{MaxFloat},...,rf_{0})$ }
+	idx = 0,tmp=0,shift1,shift2;
+	\eIf{num2 is equal to Zero}
+	{
+		Division can't be done;
+	}
+	{
+		\eIf{num1 is equal to Zero}
+		{
+			$result = Zero;$
+		}
+		{
+			1 - shift num1,num2 till there's no float digit and put the shift in shift1,shift2 respectively;
+		
+			$tmp  = n1d_{idx}$
+
+		%	\whiledo{$tmp is less than num2$}
+		%	{
+			%%	$temp = temp * 10 +(n1d_{idx++};$
+		%	} 
+			
+		%	\whiledo{$idx is less than the length of num1$}
+		%	{
+			%%	$temp = temp * 10 +(n1d_{idx++};$
+				
+			%%	$addition(result,tmp/num2);$
+				
+			%%	$ temp = (temp \% divisor) * 10 + $$number_{idx++};$
+		%	} 
+			
+		
+		}	
+
+	}
+	
+
+	\caption{Division}
+	\label{division_algorithm}
+\end{algorithm}
+
+
+\newpage
+\subsection{Interfaces}
+In this section we will be describing main interfaces that library's user will interact with them .
+
+%void uadd(bn,bn,bn*);
+\paragraph{void uadd(bn,bn,bn*)} This interface does unsigned addition on big number , It doesn't care about sign of the first two parameters and it return always a positive number in third parameter
+$$Usage : uadd(@arg1,@arg2,@resultOfAddition)  $$ 
+
+%void usub(bn,bn,bn*);
+
+\paragraph{void usub(bn,bn,bn*)} This interface does unsigned substraction on big number , It doesn't care about sign of the first two parameters and it return always a positive number in third parameter
+$$Usage : usub(@arg1,@arg2,@resultOfSubstraction)  $$ 
+%void umul(bn,bn,bn*);
+
+
+\paragraph{void usub(bn,bn,bn*)} This interface does unsigned multiplication on big number , It doesn't care about sign of the first two parameters and it return always a positive number in third parameter
+$$Usage : umul(@arg1,@arg2,@resultOfMultiplication)  $$ 
+
+%void bc_divide(bn,bn,bn*);
+
+\paragraph{void ubc\_divide(bn,bn,bn*)} This interface does unsigned division on big number , It doesn't care about sign of the first two parameters and it return always a positive number in third parameter
+$$Usage : ubc\_divide(@arg1,@arg2,@resultOfDivision)  $$ 
+
+
+
+
+
+%void add(bn,bn,bn*);
+%void uadd(bn,bn,bn*);
+\paragraph{void add(bn,bn,bn*)} This interface does signed addition on big number .
+$$Usage : add(@arg1,@arg2,@resultOfAddition)  $$ 
+
+%void usub(bn,bn,bn*);
+
+\paragraph{void sub(bn,bn,bn*)} This interface does signed substraction on big number .
+$$Usage : sub(@arg1,@arg2,@resultOfSubstraction)  $$ 
+%void umul(bn,bn,bn*);
+
+
+\paragraph{void mul(bn,bn,bn*)} This interface does signed multiplication on big number .
+$$Usage : mul(@arg1,@arg2,@resultOfMultiplication)  $$ 
+
+%void bc_divide(bn,bn,bn*);
+
+\paragraph{void bc\_divide(bn,bn,bn*)} This interface does signed division on big number .
+$$Usage : bc\_divide(@arg1,@arg2,@resultOfDivision)  $$ 
+

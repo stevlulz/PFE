@@ -1,0 +1,101 @@
+\documentclass[12]{report}
+%\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{appendix}
+\usepackage[a4paper,width=150mm,top=25mm,bottom=25mm,bindingoffset=6mm]{geometry}
+\graphicspath{{photos/}}
+\usepackage{caption}
+\usepackage{enumitem}
+\usepackage{blindtext}
+\usepackage{algorithmic}
+\usepackage{algorithm2e}
+
+%\usepackage[latin1]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[english]{babel}
+
+
+
+
+\usepackage{xcolor}
+\usepackage{listings}
+\definecolor{mGreen}{rgb}{0,0.6,0}
+\definecolor{mGray}{rgb}{0.5,0.5,0.5}
+\definecolor{mPurple}{rgb}{0.58,0,0.82}
+\definecolor{backgroundColour}{rgb}{0.95,0.95,0.92}
+
+\lstdefinestyle{CStyle}{
+	backgroundcolor=\color{backgroundColour},   
+	commentstyle=\color{mGreen},
+	keywordstyle=\color{magenta},
+	numberstyle=\tiny\color{mGray},
+	stringstyle=\color{mPurple},
+	basicstyle=\footnotesize,
+	breakatwhitespace=false,         
+	breaklines=true,                 
+	captionpos=b,                    
+	keepspaces=true,                 
+	numbers=left,                    
+	numbersep=5pt,                  
+	showspaces=false,                
+	showstringspaces=false,
+	showtabs=false,                  
+	tabsize=2,
+	language=C
+}
+
+
+
+
+
+
+
+\newcommand\tab[1][1cm]{\hspace*{#1}}
+
+
+
+\usepackage{biblatex}
+\addbibresource{ref/references.bib}
+
+\begin{document}
+
+	\input{chapitres/TitlePage.tex}
+	
+	\chapter*{Didication1}	
+	\chapter*{Didication2}
+	\chapter*{Acknowledgments}
+	\input{chapitres/Acknowledgments.tex}
+	
+	
+	\chapter*{Terminology}
+	\input{chapitres/Terminology.tex}
+	
+	\tableofcontents
+	
+	
+	\listoffigures
+
+	
+
+
+	
+	\chapter*{Introduction}
+	\input{chapitres/problem.tex}
+	
+	
+	\chapter{Wireless Sensor Network}
+	\input{chapitres/chapitre1.tex}
+	
+	\chapter{Synchronization}
+	\input{chapitres/chapitre2.tex}
+	
+	\chapter{Conception}
+	\input{chapitres/chapitre3.tex}
+	
+	\chapter{Results}
+	\input{chapitres/result.tex}
+	\printbibliography
+\end{document}
+	
+
+	
